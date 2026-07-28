@@ -8,4 +8,14 @@ dependencies = [
     "confluent-kafka>=2.15.0",
     "pandas>=3.0.3",
     "pyarrow>=25.0.0",
+    "redis>=8.0.1",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
+
+[tool.pytest.ini_options]
+# so tests can `from core.features import ...` without a src layout
+pythonpath = ["."]
