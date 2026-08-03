@@ -1,7 +1,7 @@
 """
-core/features.py - THE feature definitions. The heart of the project.
+Feature definitions
 
-This code computes the "clues" about each card from its transaction history.
+Computes the "clues" about each card from its transaction history.
 It is written ONCE and used by BOTH:
 
   * the live stream  (stream/consumer.py)  - one event at a time, as it arrives

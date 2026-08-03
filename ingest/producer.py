@@ -9,8 +9,8 @@ This is exactly what real fraud teams do to backfill features and test new
 models against past traffic. Replaying in event order is legitimate; the only
 sin would be shuffling the rows or letting the future leak in.
 
-    uv run python ingest/producer.py --limit 1000          # quick test
-    uv run python ingest/producer.py --speed 1000          # full replay
+    uv run python -m ingest.producer --limit 1000          # quick test
+    uv run python -m ingest.producer --speed 1000          # full replay
 """
 from __future__ import annotations
 

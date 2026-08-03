@@ -1,5 +1,5 @@
 """
-core/schema.py - the contract for one transaction event.
+The contract for one transaction event.
 
 Design rule: an event carries ONLY what a real payment terminal would send.
 Vesta's pre-engineered columns (V1-V339, C1-C14, D1-D15, M1-M9) are excluded
@@ -18,7 +18,7 @@ from typing import Any
 TRANSACTION_FIELDS = [
     "TransactionID",    # unique id for this purchase
     "TransactionDT",    # seconds from a hidden reference point = EVENT TIME
-    "TransactionAmt",   # how much was spent
+    "TransactionAmt",   # Transaction Amount, how much was spent
     "ProductCD",        # product category: W, C, R, H, S
     "card1",            # &&& our grouping key &&& : stands in for "the account"
     "card2", "card3", "card5",   # other numeric card attributes
@@ -73,9 +73,8 @@ class TransactionEvent:
         """For sending over Kafka."""
         return asdict(self)
 
-
+"""pandas uses NaN for missing values; the rest of our system wants None."""
 def _clean(value: Any) -> Any:
-    """pandas uses NaN for missing values; the rest of our system wants None."""
     if value is None:
         return None
     if isinstance(value, float) and math.isnan(value):

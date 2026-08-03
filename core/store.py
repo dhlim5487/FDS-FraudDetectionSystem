@@ -1,5 +1,5 @@
 """
-core/store.py - WHERE a card's history is kept.
+Card's history is kept.
 
 core/features.py answers "how do we compute the clues". This file answers
 "where do we keep the raw material". Splitting them is what lets us have both:

@@ -7,7 +7,11 @@ Per event:
     2. compute the clues  (core/features.py - the SAME code the offline
        training build uses, which is what keeps train and serve in step)
     3. write the event into history, so it counts for the NEXT transaction
-    4. write the fresh clues to feat:<card1>, ready for the scoring API
+
+The scoring API does not read a cached feature row: features depend on the
+transaction being scored (its amount, its device), so it recomputes them the
+same way, from the same history. Caching them would serve last transaction's
+answer - exactly the skew this project exists to prevent.
 
     uv run python -m stream.consumer
 
@@ -89,10 +93,6 @@ def run() -> None:
             # so re-adding an event overwrites its own row instead of
             # duplicating it. The history stays correct either way.
             features = engine.process(event)
-
-            # The hot-path feature store: whatever we know about this card RIGHT
-            # NOW, one lookup away for the scoring API (Phase 3).
-            client.hset(f"feat:{event.card1}", mapping=features)
 
             if label == "1":
                 fraud += 1

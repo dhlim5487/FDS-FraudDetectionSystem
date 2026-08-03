@@ -72,7 +72,7 @@ def assert_same(offline_rows, online_rows, events):
 # --- the edge cases most likely to break parity --------------------------
 EDGE_CASE_EVENTS = [
     # card 100: walks across every window boundary
-    evt(1, 0, 10.0, device="A"),                        # first ever: no history
+    evt(1, 0, 10.0, device="A"),                        # first transaction: no history
     evt(2, 0, 20.0, device="A"),                        # TIE on TransactionDT
     evt(3, HOUR, 30.0, addr1=2.0, device=None),         # exactly on the 1h edge
     evt(4, HOUR + 1, 40.5, addr1=None, device="B"),     # addr1 missing, new device
@@ -101,8 +101,6 @@ def test_edge_case_parity(redis_client):
 def test_real_data_parity(redis_client):
     """
     The same check against real IEEE-CIS rows, in true event-time order.
-    Synthetic events only cover the cases we thought of; real data brings the
-    ones we did not.
     """
     pd = pytest.importorskip("pandas")
     from pathlib import Path
@@ -122,7 +120,7 @@ def test_real_data_parity(redis_client):
     online = run_through(RedisStore(redis_client), events)
     assert_same(offline, online, events)
 
-
+    """To prevent learning from data never showed in the presence datasets """
 def test_no_future_leakage():
     """
     The golden rule, checked directly: a card's very first transaction must see
