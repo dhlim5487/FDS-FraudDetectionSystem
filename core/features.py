@@ -7,8 +7,7 @@ It is written ONCE and used by BOTH:
   * the live stream  (stream/consumer.py)  - one event at a time, as it arrives
   * the offline build (offline/build_training_set.py) - all history, in bulk
 
-Because both paths call this same code, the clues cannot drift apart. That is
-what prevents train-serve skew - the single most common bug in production ML.
+That is what prevents train-serve skew - the single most common bug in production ML.
 tests/test_parity.py exists to prove the two paths really do agree.
 
 WHERE the history is kept is a separate question, answered by core/store.py:
@@ -76,7 +75,7 @@ def compute_features(
     amts_7d = [row[1] for row in in_7d]
 
     # z-score: is this amount unusual for THIS card's recent norm?
-    # Needs at least 2 prior points and non-zero spread, else it's 0.
+    # Needs at least 2 prior points and non-zero spread, otherwise it's 0.
     if len(amts_7d) >= 2:
         mean_7d = statistics.fmean(amts_7d)
         std_7d = statistics.pstdev(amts_7d)

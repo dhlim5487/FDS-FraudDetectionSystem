@@ -1,13 +1,9 @@
 """
-ingest/producer.py - replay the dataset into Kafka in event-time order.
+Replay the dataset into Kafka in event-time order.
 
 We read the historical CSV, sort by TransactionDT (the real order things
 happened), and send each transaction to the 'transactions' topic. A speed
 multiplier lets six months of history replay in about an hour.
-
-This is exactly what real fraud teams do to backfill features and test new
-models against past traffic. Replaying in event order is legitimate; the only
-sin would be shuffling the rows or letting the future leak in.
 
     uv run python -m ingest.producer --limit 1000          # quick test
     uv run python -m ingest.producer --speed 1000          # full replay
@@ -32,8 +28,7 @@ IDENTITY_CSV = "data/train_identity.csv"
 def load_data(limit: int | None) -> pd.DataFrame:
     """Load transactions, attach device data, sort into event-time order."""
     # We only read the columns we actually keep, plus the label and the
-    # TransactionID needed to join device data. Reading 18 columns instead of
-    # 394 makes this load in seconds instead of eating all your memory.
+    # TransactionID needed to join device data. Reading 18 columns instead of 394
     usecols = list(dict.fromkeys(EVENT_FIELDS + [LABEL_FIELD]))
     # DeviceType/DeviceInfo live in the other file, so drop them from this read.
     usecols = [c for c in usecols if c not in ("DeviceType", "DeviceInfo")]
@@ -67,9 +62,8 @@ def run(speed: float, limit: int | None) -> None:
     wall_start = time.time()
 
     for row in df.to_dict("records"):
-        # Pull the label out BEFORE building the event. The event that rides
-        # the belt must never carry the answer. We ship the label on a side
-        # channel (Kafka header) so the training pipeline can find it later,
+        # Pull the label out BEFORE building the event. 
+        # We ship the label on a side channel (Kafka header) so the training pipeline can find it later,
         # but the scoring path will simply ignore it.
         label = row.get(LABEL_FIELD)
 
@@ -79,8 +73,7 @@ def run(speed: float, limit: int | None) -> None:
             continue
 
         # Pace the replay: if this event happened N seconds after the previous
-        # one, wait N/speed seconds. That reproduces the real rhythm of traffic
-        # - quiet nights, busy middays - just compressed in time.
+        # one, wait N/speed seconds. - Reproduces the real rhythm of traffic.
         if prev_dt is not None and speed > 0:
             gap = (event.TransactionDT - prev_dt) / speed
             if gap > 0:

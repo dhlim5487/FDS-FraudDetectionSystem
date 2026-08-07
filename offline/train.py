@@ -1,19 +1,16 @@
 """
-Teach model
+    Teaches model
 
-Reads the table built by offline/build_training_set.py and fits LightGBM on it.
+    Reads the table built by offline/build_training_set.py and fits LightGBM on it.
 
-THE ONE RULE HERE: split by TIME, never at random. A random split puts March
-transactions in the training set and February ones in the test set, so the
-model gets to see a card's future while being asked about its past. The score
-that comes out of that is a lie you only discover after deploying.
+    THE ONE RULE HERE: split by TIME, never at random. 
 
-    uv run python -m offline.train
-    uv run python -m offline.train --train-frac 0.8 --warmup-days 0
+        uv run python -m offline.train
+        uv run python -m offline.train --train-frac 0.8 --warmup-days 0
 
-Accuracy is not reported on purpose: 96.5% of rows are legitimate, so a model
-that always says "fine" scores 96.5% while catching nothing. AUC and PR-AUC
-measure what we actually care about - ranking fraud above non-fraud.
+    Accuracy is not reported on purpose: 96.5% of rows are legitimate, so a model
+    that always says "fine" scores 96.5% while catching nothing. AUC and PR-AUC
+    measure what we actually care about, ranking fraud above non-fraud.
 """
 from __future__ import annotations
 
@@ -31,12 +28,14 @@ MODEL_OUT = "data/model.txt"
 DAY = 86400
 
 
+'''
+    The first transactions of the dataset have empty history through no
+    fault of their own - every card looks brand new. Dropping that period
+     stops the model reading "0 prior transactions" as "safe".
+'''
+
 def split_by_time(df: pd.DataFrame, train_frac: float, warmup_days: int):
-    """Oldest `train_frac` of the timeline trains; the newest tail is the exam."""
     if warmup_days:
-        # The first transactions of the dataset have empty history through no
-        # fault of their own - every card looks brand new. Dropping that period
-        # stops the model reading "0 prior transactions" as "safe".
         start = df["TransactionDT"].min()
         df = df[df["TransactionDT"] >= start + warmup_days * DAY]
 
@@ -49,7 +48,7 @@ def main() -> None:
     parser.add_argument("--train-frac", type=float, default=0.8,
                         help="fraction of the timeline used for training")
     parser.add_argument("--warmup-days", type=int, default=0,
-                        help="drop this many days off the front (cold-start rows)")
+                        help="drop this many days off the front (the cold-start rows)")
     args = parser.parse_args()
 
     df = pd.read_parquet(TRAINING_SET)
@@ -63,8 +62,8 @@ def main() -> None:
     print(f"no overlap: train ends {train.TransactionDT.max():,}, "
           f"test starts {test.TransactionDT.min():,}\n")
 
-    # Defaults plus early stopping. No tuning yet - get an honest baseline
-    # first, then find out whether tuning is even worth the trouble.
+    # Defaults plus early stopping. No tuning yet - get an honest baseline first,
+    # then find out whether tuning is even worth the trouble.
     model = lgb.train(
         {"objective": "binary", "metric": "auc", "learning_rate": 0.05,
          "verbosity": -1, "seed": 42},

@@ -15,8 +15,7 @@ NO CACHED FEATURES. The clues depend on the transaction being scored - its
 amount drives amt_zscore_7d, its device drives is_new_device - so they are
 recomputed here from the same history, with the same core/features.py the
 training build used. Serving a stored row would answer about the card's LAST
-transaction instead of this one, which is exactly the skew this project is
-about.
+transaction instead of this one.
 """
 from __future__ import annotations
 
@@ -50,8 +49,8 @@ def score(event: TransactionEvent):
     row = pd.DataFrame([[features[n] for n in FEATURE_NAMES]], columns=FEATURE_NAMES)
     fraud_score = float(model.predict(row)[0])
 
-    # features come back too - a score with no reason behind it is not much use
-    # to whoever has to explain the decline to a customer.
+    # features come back too - a score with no reason behind it
+    # is not much use to whoever has to explain the decline to a customer.
     return {
         "TransactionID": event.TransactionID,
         "card1": event.card1,
