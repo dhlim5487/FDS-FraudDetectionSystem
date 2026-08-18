@@ -1,0 +1,52 @@
+/home/dhlim/fds/.venv/lib/python3.11/site-packages/shap/explainers/_tree.py:620: UserWarning: LightGBM binary classifier with TreeExplainer shap values output has changed to a list of ndarray
+  warnings.warn(
+[realistic] train 472,432 rows   test 118,108 rows   33 features (10 existing + 23 candidates)
+[100]	valid_0's auc: 0.756867
+
+with candidates added:
+  auc                    0.7578
+  pr_auc                 0.2040
+  recall@fpr0.001        0.0524
+  recall@fpr0.01         0.1580
+  prec@recall0.5         0.1347
+  prec@recall0.8         0.0557
+  prec@top0.5pct         0.5237
+  prec@top1pct           0.4056
+  prec@top2pct           0.3213
+
+baseline (existing 10 features only, from data/model.meta.json):
+  auc                    0.7235   (delta +0.0342)
+  pr_auc                 0.1140   (delta +0.0900)
+  recall@fpr0.001        0.0133   (delta +0.0391)
+  recall@fpr0.01         0.0802   (delta +0.0778)
+  prec@recall0.5         0.0933   (delta +0.0414)
+  prec@recall0.8         0.0503   (delta +0.0054)
+  prec@top0.5pct         0.2678   (delta +0.2559)
+  prec@top1pct           0.2312   (delta +0.1744)
+  prec@top2pct           0.2011   (delta +0.1202)
+
+top 20 by permutation importance (delta AUC when shuffled):
+            feature  is_existing  gain_pct  mean_abs_shap  perm_delta_auc
+              id_31        False 13.587529       0.141634        0.033138
+              id_19        False 31.330487       0.140977        0.027779
+       amt_mean_24h         True  4.073419       0.156007        0.015483
+              id_29        False  5.196340       0.078231        0.013001
+ distinct_addr1_24h         True  1.999047       0.044030        0.011849
+      amt_zscore_7d         True  4.883302       0.143707        0.011789
+              id_20        False 16.838645       0.079686        0.009704
+              id_14        False  0.498702       0.003536        0.006631
+secs_since_prev_txn         True  1.892558       0.050560        0.006143
+      txn_count_24h         True  2.779311       0.043399        0.003857
+              id_30        False  3.594177       0.038774        0.002832
+        amt_sum_24h         True  1.085710       0.030206        0.002572
+              id_33        False  4.181127       0.032175        0.002439
+         amt_sum_1h         True  0.514874       0.035608        0.002294
+        amt_mean_1h         True  0.944800       0.032315        0.001800
+              id_38        False  0.751563       0.004711        0.000677
+              id_13        False  1.760130       0.016822        0.000356
+              id_17        False  0.155099       0.003810        0.000353
+              id_12        False  0.270389       0.001058        0.000232
+              id_25        False  0.668467       0.001554        0.000159
+
+wrote analysis/out/feature_contribution_realistic.csv
+wrote analysis/out/shap_dependence_realistic_{id_31,id_19,id_20}.png

@@ -31,10 +31,10 @@ def load_data(limit: int | None) -> pd.DataFrame:
     # TransactionID needed to join device data. Reading 18 columns instead of 394
     usecols = list(dict.fromkeys(EVENT_FIELDS + [LABEL_FIELD]))
     # DeviceType/DeviceInfo live in the other file, so drop them from this read.
-    usecols = [c for c in usecols if c not in ("DeviceType", "DeviceInfo")]
+    usecols = [c for c in usecols if c not in ("DeviceType", "DeviceInfo", "id_31", "id_19", "id_20", "id_29", "id_30")]
 
     txn = pd.read_csv(TRANSACTION_CSV, usecols=usecols, nrows=limit)
-    idn = pd.read_csv(IDENTITY_CSV, usecols=["TransactionID", "DeviceType", "DeviceInfo"])
+    idn = pd.read_csv(IDENTITY_CSV, usecols=["TransactionID", "DeviceType", "DeviceInfo", "id_31", "id_19", "id_20", "id_29", "id_30"])
 
     # LEFT join: keep every transaction. ~75% will have no device row, and
     # those columns stay empty (NaN) on purpose - missing device IS a signal.

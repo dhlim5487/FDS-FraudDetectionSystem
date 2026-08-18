@@ -23,6 +23,7 @@ from core.features import FEATURE_NAMES, DAY, HOUR, WEEK, FeatureEngine
 from core.schema import TransactionEvent
 from core.store import InMemoryStore, RedisStore
 
+
 TEST_DB = 15
 
 
@@ -40,13 +41,14 @@ def redis_client():
     client.flushdb()
 
 
-def evt(txn_id, dt, amt, card=100, addr1=1.0, device=None):
+def evt(txn_id, dt, amt, card=100, addr1=1.0, device=None, id_31=None):
     return TransactionEvent(
         TransactionID=txn_id, TransactionDT=dt, TransactionAmt=amt, card1=card,
         ProductCD="W", card2=None, card3=None, card4=None, card5=None, card6=None,
         addr1=addr1, addr2=None, dist1=None, dist2=None,
         P_emaildomain=None, R_emaildomain=None,
         DeviceType=None, DeviceInfo=device,
+        id_31=id_31
     )
 
 
@@ -75,7 +77,7 @@ EDGE_CASE_EVENTS = [
     evt(1, 0, 10.0, device="A"),                        # first transaction: no history
     evt(2, 0, 20.0, device="A"),                        # TIE on TransactionDT
     evt(3, HOUR, 30.0, addr1=2.0, device=None),         # exactly on the 1h edge
-    evt(4, HOUR + 1, 40.5, addr1=None, device="B"),     # addr1 missing, new device
+    evt(4, HOUR + 1, 40.5, addr1=None, device="B", id_31="ie 11.0 for tablet"),   # addr1 missing, new device, id_31 present
     evt(5, DAY, 50.25, addr1=3.0, device="A"),          # exactly on the 24h edge
     evt(6, DAY + 1, 7.77, addr1=3.0, device="C"),
     evt(7, WEEK, 99.99, addr1=1.0, device="A"),         # 7d edge: prunes the start

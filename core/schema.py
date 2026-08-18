@@ -33,6 +33,11 @@ TRANSACTION_FIELDS = [
 IDENTITY_FIELDS = [
     "DeviceType",       # mobile / desktop
     "DeviceInfo",       # e.g. "SM-G930V Build/NRD90M", "Windows"
+    "id_31",
+    "id_19",
+    "id_20",
+    "id_29",
+    "id_30",
 ]
 
 # The answer key. Deliberately NOT part of the event.
@@ -68,6 +73,11 @@ class TransactionEvent:
     # Usually missing (~75% of the time)
     DeviceType: str | None = None
     DeviceInfo: str | None = None
+    id_31: str | None = None
+    id_19: str | None = None
+    id_20: str | None = None
+    id_29: str | None = None
+    id_30: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         """For sending over Kafka."""

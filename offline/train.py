@@ -24,7 +24,7 @@ import pandas as pd
 from sklearn.metrics import (average_precision_score, precision_recall_curve,
                             roc_auc_score, roc_curve)
 
-from core.features import FEATURE_NAMES
+from core.features import FEATURE_NAMES, CATEGORICAL_FEATURES
 from core.schema import LABEL_FIELD
 
 TRAINING_SET = "data/training_set.parquet"
@@ -107,6 +107,8 @@ def main() -> None:
     args = parser.parse_args()
 
     df = pd.read_parquet(TRAINING_SET)
+    for col in CATEGORICAL_FEATURES:
+        df[col] = df[col].fillna("__missing__").astype("category")
     train, test = split_by_time(df, args.train_frac, args.warmup_days)
 
     span = lambda d: (d.TransactionDT.max() - d.TransactionDT.min()) / DAY
@@ -122,9 +124,9 @@ def main() -> None:
     model = lgb.train(
         {"objective": "binary", "metric": "auc", "learning_rate": 0.05,
          "verbosity": -1, "seed": args.seed},
-        lgb.Dataset(train[FEATURE_NAMES], train[LABEL_FIELD]),
+        lgb.Dataset(train[FEATURE_NAMES], train[LABEL_FIELD], categorical_feature=CATEGORICAL_FEATURES),
         num_boost_round=1000,
-        valid_sets=[lgb.Dataset(test[FEATURE_NAMES], test[LABEL_FIELD])],
+        valid_sets=[lgb.Dataset(test[FEATURE_NAMES], test[LABEL_FIELD], categorical_feature=CATEGORICAL_FEATURES)],
         callbacks=[lgb.early_stopping(50, verbose=False),
                    lgb.log_evaluation(100)],
     )

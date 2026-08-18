@@ -1,0 +1,55 @@
+/home/dhlim/fds/.venv/lib/python3.11/site-packages/shap/explainers/_tree.py:620: UserWarning: LightGBM binary classifier with TreeExplainer shap values output has changed to a list of ndarray
+  warnings.warn(
+[full] train 472,432 rows   test 118,108 rows   128 features (10 existing + 118 candidates)
+[100]	valid_0's auc: 0.86227
+[200]	valid_0's auc: 0.873598
+[300]	valid_0's auc: 0.877908
+[400]	valid_0's auc: 0.880439
+
+with candidates added:
+  auc                    0.8806
+  pr_auc                 0.4723
+  recall@fpr0.001        0.1900
+  recall@fpr0.01         0.3976
+  prec@recall0.5         0.4184
+  prec@recall0.8         0.1233
+  prec@top0.5pct         0.8983
+  prec@top1pct           0.8357
+  prec@top2pct           0.6363
+
+baseline (existing 10 features only, from data/model.meta.json):
+  auc                    0.7235   (delta +0.1571)
+  pr_auc                 0.1140   (delta +0.3583)
+  recall@fpr0.001        0.0133   (delta +0.1767)
+  recall@fpr0.01         0.0802   (delta +0.3174)
+  prec@recall0.5         0.0933   (delta +0.3251)
+  prec@recall0.8         0.0503   (delta +0.0729)
+  prec@top0.5pct         0.2678   (delta +0.6305)
+  prec@top1pct           0.2312   (delta +0.6046)
+  prec@top2pct           0.2011   (delta +0.4352)
+
+top 20 by permutation importance (delta AUC when shuffled):
+      feature  is_existing  gain_pct  mean_abs_shap  perm_delta_auc
+           D2        False  4.980895       0.211012        0.023538
+           C1        False  8.629986       0.090240        0.021518
+        id_19        False  7.393661       0.149537        0.016602
+           C6        False  1.581417       0.065804        0.016313
+           C9        False  1.124987       0.064402        0.013627
+          D15        False  2.366293       0.116966        0.009690
+           C5        False  1.530276       0.159623        0.007774
+          C11        False  1.492621       0.058632        0.006801
+           C2        False  2.180808       0.080424        0.006750
+amt_zscore_7d         True  1.584891       0.105167        0.005784
+           C8        False  0.688388       0.050089        0.005568
+         V258        False 17.327240       0.069262        0.005060
+         V294        False  4.542172       0.121777        0.004869
+        id_20        False  5.006441       0.076754        0.003948
+         V102        False  0.164093       0.018909        0.003797
+ amt_mean_24h         True  1.398068       0.116137        0.003507
+          D10        False  2.047481       0.041849        0.003347
+  amt_sum_24h         True  0.755348       0.046782        0.002595
+           M6        False  0.635518       0.079024        0.002563
+         V308        False  2.399367       0.080827        0.002401
+
+wrote analysis/out/feature_contribution_full.csv
+wrote analysis/out/shap_dependence_full_{D2,C5,id_19}.png

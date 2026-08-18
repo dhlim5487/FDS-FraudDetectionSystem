@@ -43,9 +43,21 @@ FEATURE_NAMES = [
     "amt_zscore_7d",        # how weird is THIS amount vs this card's 7-day norm
     "secs_since_prev_txn",  # seconds since this card's previous txn (-1 if none)
     "distinct_addr1_24h",   # how many billing regions this card touched in 24h
-    "is_new_device",        # 1 if this device was never seen on this card before
+    "is_new_device",
+    "id_31",            
+    "id_19",
+    "id_20",
+    "id_29",
+    "id_30",
 ]
 
+CATEGORICAL_FEATURES = [
+    "id_31",
+    "id_19",
+    "id_20",
+    "id_29",
+    "id_30",
+]
 
 def compute_features(
     history: list[tuple[int, float, float | None]],
@@ -109,6 +121,11 @@ def compute_features(
         "secs_since_prev_txn": float(secs_since_prev),
         "distinct_addr1_24h": float(len(addrs)),
         "is_new_device": float(is_new_device),
+        "id_31" : str(event.id_31) if event.id_31 is not None else "__missing__",
+        "id_19" : str(event.id_19) if event.id_19 is not None else "__missing__",
+        "id_20" : str(event.id_20) if event.id_20 is not None else "__missing__",
+        "id_29" : str(event.id_29) if event.id_29 is not None else "__missing__",
+        "id_30" : str(event.id_30) if event.id_30 is not None else "__missing__",
     }
 
 
