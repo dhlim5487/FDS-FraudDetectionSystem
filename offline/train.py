@@ -24,7 +24,7 @@ import pandas as pd
 from sklearn.metrics import (average_precision_score, precision_recall_curve,
                             roc_auc_score, roc_curve)
 
-from core.features import FEATURE_NAMES, CATEGORICAL_FEATURES
+from core.features import FEATURE_NAMES, CATEGORICAL_FEATURES, apply_categorical_dtype
 from core.schema import LABEL_FIELD
 
 TRAINING_SET = "data/training_set.parquet"
@@ -107,8 +107,7 @@ def main() -> None:
     args = parser.parse_args()
 
     df = pd.read_parquet(TRAINING_SET)
-    for col in CATEGORICAL_FEATURES:
-        df[col] = df[col].fillna("__missing__").astype("category")
+    df = apply_categorical_dtype(df)
     train, test = split_by_time(df, args.train_frac, args.warmup_days)
 
     span = lambda d: (d.TransactionDT.max() - d.TransactionDT.min()) / DAY

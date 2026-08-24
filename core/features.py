@@ -23,6 +23,8 @@ from __future__ import annotations
 
 import statistics
 
+import pandas as pd
+
 from core.schema import TransactionEvent
 from core.store import InMemoryStore
 
@@ -58,6 +60,14 @@ CATEGORICAL_FEATURES = [
     "id_29",
     "id_30",
 ]
+
+
+def apply_categorical_dtype(df: pd.DataFrame) -> pd.DataFrame:
+    """Missing id_ fields are their own category, not NaN - see compute_features."""
+    for col in CATEGORICAL_FEATURES:
+        df[col] = df[col].fillna("__missing__").astype("category")
+    return df
+
 
 def compute_features(
     history: list[tuple[int, float, float | None]],

@@ -19,8 +19,6 @@ the seed changed, so any spread is noise by construction:
     recall@fpr0.01       3.66%      no worse than -10%  ~2.7x
     recall@fpr0.001     10.9%       EXCLUDED - only 54 frauds decide it
 
-Refusing is not a failure. The gate doing its job and the gate having nothing
-to do both end in exit 0; a non-zero exit means the gate itself broke.
 """
 from __future__ import annotations
 
@@ -32,7 +30,7 @@ from pathlib import Path
 import lightgbm as lgb
 import pandas as pd
 
-from core.features import FEATURE_NAMES
+from core.features import FEATURE_NAMES, apply_categorical_dtype
 from core.schema import LABEL_FIELD
 from offline.train import TRAINING_SET, evaluate, split_by_time
 
@@ -183,6 +181,7 @@ def main() -> None:
         raise SystemExit(f"no candidate at {candidate}")
 
     df = pd.read_parquet(args.training_set)
+    df = apply_categorical_dtype(df)
     train, test = split_by_time(df, args.train_frac, 0)
 
     prod_meta_file = sidecar(production, ".meta.json")

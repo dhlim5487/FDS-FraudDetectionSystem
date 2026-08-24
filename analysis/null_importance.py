@@ -26,7 +26,7 @@ import numpy as np
 import pandas as pd
 import lightgbm as lgb
 
-from core.features import FEATURE_NAMES, CATEGORICAL_FEATURES
+from core.features import FEATURE_NAMES, CATEGORICAL_FEATURES, apply_categorical_dtype
 from core.schema import LABEL_FIELD
 from offline.train import split_by_time
 
@@ -57,8 +57,7 @@ def get_feature_importances(train_df: pd.DataFrame, shuffle: bool, seed: int | N
 
 def load_train_split() -> pd.DataFrame:
     df = pd.read_parquet(TRAINING_SET)
-    for col in CATEGORICAL_FEATURES:
-        df[col] = df[col].fillna("__missing__").astype("category")
+    df = apply_categorical_dtype(df)
     train, _ = split_by_time(df, train_frac=0.8, warmup_days=0)
     return train
 

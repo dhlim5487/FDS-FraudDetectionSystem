@@ -9,7 +9,7 @@ core/features.py answers "how do we compute the clues". This file answers
                     survives a consumer restart.
 
 Both stores expose the same two methods, so core/features.py never knows or
-cares which one it is talking to. The measuring cup stays the same size.
+cares which one it is talking to. The measuring params stay the same.
 
     load(card1, now, window) -> (history, devices)
         history: (dt, amount, addr1) rows for this card, all strictly BEFORE
