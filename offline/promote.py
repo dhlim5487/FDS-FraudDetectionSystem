@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 from pathlib import Path
 
@@ -159,11 +160,20 @@ def check_performance(prod: dict, cand: dict) -> list[tuple]:
 
 
 def install(candidate: Path, production: Path) -> None:
-    """Model, scores and metadata move together or the set stops making sense."""
+    """Model, scores and metadata move together or the set stops making sense.
+
+    Copy to a sibling temp name, then rename over the target. The rename is
+    atomic within a filesystem, so serving/app.py - which reloads when the
+    mtime changes - reads either the old file or the new one, never a
+    half-written one.
+    """
     for suffix in (candidate.suffix, ".preds.parquet", ".meta.json"):
         src = candidate.with_suffix(suffix)
         if src.exists():
-            shutil.copy2(src, production.with_suffix(suffix))
+            dst = production.with_suffix(suffix)
+            tmp = dst.with_name(dst.name + ".tmp")
+            shutil.copy2(src, tmp)
+            os.replace(tmp, dst)
 
 
 def main() -> None:
